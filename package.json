@@ -1,0 +1,27 @@
+{
+  "name": "refaccionaria-gallegos",
+  "version": "1.0.0",
+  "description": "Sistema web de gestión integral para Refaccionaria Gallegos - Proyecto UAA",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "refaccionaria",
+    "autopartes",
+    "ecommerce",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "Equipo UAA (Cesar, Jorge, Diego, Daniel)",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refaccionaria Gallegos | Admin Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* --- ESTILO GENERAL --- */
+        :root {
+            --primary: #ff6b00;
+            --secondary: #2c3e50;
+            --bg-base: #333;
+            --bg-panel: rgba(255, 255, 255, 0.98);
+            --darker: #0d0d0d;
+            --dark-text: #222;
+            --gray: #666;
+            --danger: #e74c3c;
+            --success: #27ae60;
+            --info: #3498db;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif; 
+            margin: 0; 
+            color: var(--dark-text); 
+            background-color: var(--bg-base); 
+            background-image: url('fondo.jpg'); 
+            background-attachment: fixed; 
+            background-size: cover; 
+            background-position: center;
+        }
+
+        /* Paneles */
+        .content-wrapper {
+            background-color: var(--bg-panel);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            margin-bottom: 30px;
+            border-top: 4px solid var(--primary);
+        }
+        
+        .content-wrapper p { line-height: 1.8; margin-bottom: 15px; text-align: justify; }
+        .content-wrapper h3 { color: var(--secondary); margin-top: 25px; border-left: 4px solid var(--primary); padding-left: 10px; }
+        .content-wrapper ul { margin-bottom: 20px; padding-left: 20px; }
+        .content-wrapper li { margin-bottom: 8px; line-height: 1.6; }
+
+        /* Navbar */
+        nav { background: linear-gradient(to right, #111, #222); color: white; padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .nav-container { max-width: 1200px; margin: auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .logo { font-size: 1.4rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .logo span { color: var(--primary); }
+        .nav-actions button { background: rgba(255,255,255,0.1); border: 1px solid transparent; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; margin-left: 8px; transition: 0.3s; }
+        .nav-actions button:hover { background: var(--primary); }
+        .btn-highlight { background: var(--primary) !important; font-weight: bold; }
+
+        /* Admin Dashboard */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #ccc; }
+        .stat-info h3 { margin: 0 0 5px 0; font-size: 0.9rem; color: #888; text-transform: uppercase; }
+        .stat-value { margin: 0; font-size: 2rem; font-weight: 800; color: var(--secondary); }
+        .stat-icon { font-size: 2.5rem; opacity: 0.2; }
+        
+        .card-sales { border-color: var(--success); } .card-sales .stat-icon { color: var(--success); }
+        .card-orders { border-color: var(--info); } .card-orders .stat-icon { color: var(--info); }
+        .card-alerts { border-color: var(--danger); } .card-alerts .stat-icon { color: var(--danger); }
+
+        /* Tablas */
+        .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid #eee; }
+        .modern-table { width: 100%; border-collapse: collapse; background: white; font-size: 0.95rem; }
+        .modern-table thead { background-color: var(--secondary); color: white; }
+        .modern-table th { padding: 15px; text-align: left; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
+        .modern-table td { padding: 12px 15px; border-bottom: 1px solid #f0f0f0; color: #555; vertical-align: middle; }
+        .modern-table tr:hover { background-color: #f8f9fa; }
+
+        /* Botones Acción */
+        .action-btn { width: 32px; height: 32px; border-radius: 6px; border: none; color: white; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; margin-right: 5px; }
+        .btn-edit { background: var(--info); }
+        .btn-delete { background: var(--danger); }
+        .btn-view { background: #2c3e50; }
+        .action-btn:hover { opacity: 0.9; transform: scale(1.1); }
+        .status-select { padding: 6px; border-radius: 20px; border: 1px solid #ddd; font-size: 0.85rem; background: white; cursor: pointer; }
+
+        /* Cliente */
+        .hero-section { background: rgba(13, 13, 13, 0.9); color: white; padding: 50px; border-radius: 12px; text-align: center; margin-bottom: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .hero-search input { padding: 15px 25px; width: 60%; border-radius: 30px; border: none; font-size: 1.1rem; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 10px; overflow: hidden; transition: transform 0.3s; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .card:hover { transform: translateY(-8px); }
+        .card-img-top { width: 100%; height: 200px; object-fit: cover; background: #f9f9f9; display: flex; align-items: center; justify-content: center; }
+        .card-img-top img { width: 100%; height: 100%; object-fit: contain; padding: 20px; }
+        .card-body { padding: 20px; text-align: center; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin: 10px 0; color: var(--secondary); }
+        .card-price { font-size: 1.4rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 15px; }
+
+        /* Modales y Generales */
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; min-height: 80vh; }
+        .hidden { display: none !important; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(6px); overflow-y: auto; padding: 20px 0; }
+        .modal-box { background: white; width: 90%; max-width: 420px; padding: 40px; border-radius: 12px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5); margin: auto; }
+        .close-btn { position: absolute; top: 20px; right: 25px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
+        input, select { width: 100%; padding: 12px 15px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; background: #f9f9f9; display: block; font-size: 1rem; }
+        .btn-block { width: 100%; padding: 14px; font-size: 1rem; border-radius: 8px; background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
+        
+        /* Ticket */
+        .ticket-container { font-family: 'Courier New', monospace; border: 1px dashed #aaa; padding: 20px; background: #fff; color: #000; max-width: 350px; margin: 0 auto; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        
+        footer { background: #111; color: #888; padding: 40px 0; margin-top: 60px; text-align: center; border-top: 3px solid var(--primary); }
+        .footer-links a { color: #bbb; margin: 0 15px; text-decoration: none; transition: 0.3s; font-size: 0.9rem; }
+        .footer-links a:hover { color: var(--primary); }
+
+        /* Publicos */
+        #brand-carousel { background: white; padding: 20px 0; margin-bottom: 40px; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        #brand-carousel-track { display: inline-block; animation: scroll 20s linear infinite; white-space: nowrap; }
+        .brand-logo { height: 40px; margin: 0 30px; filter: grayscale(1); opacity: 0.6; transition: 0.3s; }
+        .brand-logo:hover { filter: grayscale(0); opacity: 1; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        #promo-banners { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 40px; }
+        .promo-card { border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; cursor: pointer; border: 2px solid transparent; }
+        .promo-card img { width: 100%; height: auto; display: block; }
+        .promo-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        
+        .toast-notification { position: fixed; bottom: 20px; right: 20px; background: #222; color: white; padding: 15px 25px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px; z-index: 3000; transform: translateY(100px); opacity: 0; transition: 0.3s; border-left: 4px solid var(--primary); }
+        .toast-notification.show { transform: translateY(0); opacity: 1; }
+
+        @media (max-width: 768px) { #promo-banners { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast-notification"><i class="fas fa-check-circle" style="color:var(--primary)"></i><span id="toast-msg">Mensaje</span></div>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo" onclick="irAHome()">
+                <i class="fas fa-cogs fa-lg"></i>
+                <div>REFACCIONARIA<br><span>GALLEGOS</span></div>
+            </div>
+            <div id="menu-guest" class="nav-actions">
+                <button onclick="abrirModal('modal-login')">Iniciar Sesión</button>
+                <button class="btn-highlight" onclick="abrirModal('modal-registro')">Crear Cuenta</button>
+            </div>
+            <div id="menu-cliente" class="nav-actions hidden">
+                <span id="user-name" style="margin-right:10px; color:#ccc;">Usuario</span>
+                <button onclick="verMisPedidos()"><i class="fas fa-box"></i> Pedidos</button>
+                <button onclick="verCarrito()" class="btn-highlight"><i class="fas fa-shopping-cart"></i> <span id="cart-counter">0</span></button>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+            <div id="menu-admin" class="nav-actions hidden">
+                <span style="color:var(--primary); font-weight:bold; margin-right:10px;">ADMINISTRADOR</span>
+                <button onclick="verDashboard()" class="btn-highlight"><i class="fas fa-chart-pie"></i> Dashboard</button>
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <div class="container">
+        <div id="view-home">
+            <div class="hero-section">
+                <h1>Encuentra la refacción exacta</h1>
+                <input type="text" id="buscador" placeholder="Buscar pieza..." onkeyup="filtrarProductos()">
+            </div>
+            <div id="brand-carousel"><div id="brand-carousel-track">
+                <img class="brand-logo" src="LOGOS/Bosch_logo.png"><img class="brand-logo" src="LOGOS/ngk.jpg"><img class="brand-logo" src="LOGOS/brembo.jpg"><img class="brand-logo" src="LOGOS/mobil.png"><img class="brand-logo" src="LOGOS/luk.jpg"><img class="brand-logo" src="LOGOS/kyn.jpg"><img class="brand-logo" src="LOGOS/gates.jpg"><img class="brand-logo" src="LOGOS/Bosch_logo.png"><img class="brand-logo" src="LOGOS/ngk.jpg">
+            </div></div>
+            <div id="promo-banners">
+                <div class="promo-card" onclick="alert('Oferta Black Friday activada!')"><img src="LOGOS/BF.png" onerror="this.src='https://placehold.co/400x200/000/FFF?text=BLACK+FRIDAY'"></div>
+                <div class="promo-card" onclick="alert('Envío gratis!')"><img src="LOGOS/ENVIOS.png" onerror="this.src='https://placehold.co/400x200/333/FFF?text=ENVIO+GRATIS'"></div>
+                <div class="promo-card" onclick="alert('Meses sin intereses')"><img src="LOGOS/MSI.png" onerror="this.src='https://placehold.co/400x200/f37021/FFF?text=MSI+TARJETAS'"></div>
+            </div>
+            <div id="catalogo" class="products-grid"></div>
+        </div>
+
+        <div id="view-orders" class="hidden content-wrapper">
+            <div class="section-header"><h2><i class="fas fa-history"></i> Historial de Pedidos</h2><button onclick="irAHome()" style="background:none; border:1px solid #ccc; padding:5px 10px; cursor:pointer; border-radius:4px;">Volver a Tienda</button></div>
+            <div id="orders-list"></div>
+        </div>
+
+        <!-- VISTA ADMIN DASHBOARD -->
+        <div id="view-admin" class="hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <h1 style="color:white; margin:0; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Panel de Control</h1>
+                <button class="btn-highlight" style="padding:12px 25px; border:none; border-radius:30px; cursor:pointer; box-shadow:0 5px 15px rgba(255,107,0,0.4);" onclick="abrirModal('modal-crear-producto')"><i class="fas fa-plus-circle"></i> Nuevo Producto</button>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card card-sales"><div class="stat-info"><h3>Ventas Totales</h3><div class="stat-value" id="stat-ventas">$0.00</div></div><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div></div>
+                <div class="stat-card card-orders"><div class="stat-info"><h3>Pedidos Hoy</h3><div class="stat-value" id="stat-pedidos">0</div></div><div class="stat-icon"><i class="fas fa-shopping-bag"></i></div></div>
+                <div class="stat-card card-alerts"><div class="stat-info"><h3>Alertas Stock</h3><div class="stat-value" id="stat-alertas">0</div></div><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div></div>
+            </div>
+
+            <div style="display:flex; gap:30px; flex-wrap:wrap;">
+                <div class="content-wrapper" style="flex: 1.5; min-width: 400px; margin-bottom:0;">
+                    <div class="section-header"><h2><i class="fas fa-boxes"></i> Inventario</h2></div>
+                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                        <table class="modern-table" id="productos-table">
+                            <thead><tr><th>Producto</th><th>Info</th><th>Precio</th><th>Stock</th><th>Acciones</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="content-wrapper" style="flex: 1; min-width: 350px; margin-bottom:0;">
+                    <div class="section-header"><h2><i class="fas fa-truck"></i> Pedidos Recientes</h2></div>
+                    <div class="table-responsive">
+                        <table class="modern-table" id="admin-table">
+                            <thead><tr><th>Folio</th><th>Total</th><th>Estado</th><th>Acción</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top:25px;">
+                        <h4 style="color:#666; margin-bottom:10px;">⚠️ Alertas de Reabastecimiento</h4>
+                        <div id="stock-alerts-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VISTAS INFORMATIVAS -->
+        <div id="view-about" class="hidden content-wrapper">
+            <h3><i class="fas fa-graduation-cap"></i> Acerca del Proyecto</h3>
+            <p>Este sistema integral de gestión de refaccionaria (`Refaccionaria Gallegos`) fue desarrollado por estudiantes de la <b>Universidad Autónoma de Aguascalientes (UAA)</b>, cursando el <b>Séptimo Semestre de Ingeniería en Informática</b>.</p>
+            <p>El proyecto surge como una iniciativa para aplicar conocimientos avanzados en Bases de Datos NoSQL (MongoDB), desarrollo Backend (Node.js/Express) y diseño Frontend interactivo.</p>
+            <h3>Objetivos</h3>
+            <ul><li>Arquitectura Full Stack robusta.</li><li>Experiencia de usuario óptima.</li><li>Funcionalidades avanzadas (CRUD, Rastreo).</li></ul>
+        </div>
+        <div id="view-privacy" class="hidden content-wrapper">
+            <h3><i class="fas fa-user-shield"></i> Política de Privacidad</h3>
+            <p>En `Refaccionaria Gallegos`, la privacidad es fundamental.</p>
+            <p><b>1. Datos Recopilados:</b> Recopilamos nombres y correos solo para simulación académica.</p>
+            <p><b>2. Uso de Información:</b> Datos usados exclusivamente en BD local para simulación.</p>
+        </div>
+        <div id="view-contact" class="hidden content-wrapper">
+            <h3><i class="fas fa-headset"></i> Contacto y Soporte</h3>
+            <p>Si tienes dudas, contáctanos:</p>
+            <ul><li><b>Correo:</b> soporte@uaa.edu.mx</li><li><b>WhatsApp:</b> +52 449 123 4567</li><li><b>Ubicación:</b> Universidad Autónoma de Aguascalientes.</li></ul>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="#" onclick="mostrarPagina('view-about')">Quiénes Somos</a> | 
+            <a href="#" onclick="mostrarPagina('view-privacy')">Política de Privacidad</a> | 
+            <a href="#" onclick="mostrarPagina('view-contact')">Contacto</a>
+        </div>
+        <p style="margin-top: 15px; font-size: 0.85rem;">&copy; 2025 Refaccionaria Gallegos - UAA</p>
+    </footer>
+
+    <!-- MODALES -->
+    <div id="modal-login" class="modal-overlay hidden"><div class="modal-box"><span class="close-btn" onclick="cerrarModales()">&times;</span><h2 style="text-align:center;">Bienvenido</h2><input type="text" id="login-email" placeholder="Correo"><input type="password" id="login-pass" placeholder="Contraseña"><button class="btn-block" onclick="login()">INGRESAR</button></div></div>
+    <div id="modal-registro" class="modal-overlay hidden"><div class="modal-box"><span class="close-btn" onclick="cerrarModales()">&times;</span><h2 style="text-align:center;">Nueva Cuenta</h2><input type="text" id="reg-nombre" placeholder="Nombre"><input type="text" id="reg-email" placeholder="Correo"><input type="password" id="reg-pass" placeholder="Contraseña"><button class="btn-block" style="background: var(--secondary);" onclick="registrar()">REGISTRARME</button></div></div>
+
+    <div id="modal-crear-producto" class="modal-overlay hidden"><div class="modal-box"><span class="close-btn" onclick="cerrarModales()">&times;</span><h3>Nuevo Producto</h3><input type="text" id="new-nombre" placeholder="Nombre"><input type="text" id="new-marca" placeholder="Marca"><select id="new-categoria"><option value="General">General</option><option value="Motor">Motor</option><option value="Frenos">Frenos</option><option value="Suspension">Suspensión</option><option value="Encendido">Encendido</option><option value="Lubricacion">Lubricación</option><option value="Electrico">Eléctrico</option></select><label style="font-size:0.8rem;">Imagen:</label><input type="file" id="new-imagen-file" accept="image/*"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="number" id="new-precio" placeholder="Precio"><input type="number" id="new-stock" placeholder="Stock"></div><button class="btn-block" onclick="procesarYGuardarProducto()">GUARDAR</button></div></div>
+
+    <div id="modal-editar-producto" class="modal-overlay hidden"><div class="modal-box"><span class="close-btn" onclick="cerrarModales()">&times;</span><h3>Editar</h3><input type="hidden" id="edit-id"><input type="text" id="edit-nombre" placeholder="Nombre"><input type="text" id="edit-marca" placeholder="Marca"><select id="edit-categoria"><option value="General">General</option><option value="Motor">Motor</option><option value="Frenos">Frenos</option><option value="Suspension">Suspensión</option><option value="Encendido">Encendido</option><option value="Lubricacion">Lubricación</option><option value="Electrico">Eléctrico</option></select><label style="font-size:0.8rem;">Imagen:</label><input type="file" id="edit-imagen-file" accept="image/*"><input type="hidden" id="edit-imagen-base64"><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="number" id="edit-precio"><input type="number" id="edit-stock"></div><button class="btn-block" style="background: var(--info);" onclick="procesarYEditarProducto()">ACTUALIZAR</button></div></div>
+
+    <!-- CARRITO CON TARJETA SIMULADA -->
+    <div id="modal-carrito" class="modal-overlay hidden">
+        <div class="modal-box">
+            <span class="close-btn" onclick="cerrarModales()">&times;</span>
+            <h2 style="text-align:center;">Tu Carrito</h2>
+            <div id="lista-items-carrito" style="max-height:200px; overflow-y:auto; margin:15px 0; border-top:1px solid #eee; border-bottom:1px solid #eee;"></div>
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:1.2rem; margin-bottom:15px;">
+                <span>TOTAL:</span> <span id="total-carrito" style="color:var(--primary)">$0.00</span>
+            </div>
+            <!-- Tarjeta Visual -->
+            <div style="background: linear-gradient(135deg, #2c3e50, #000); padding: 20px; border-radius: 10px; color: white; margin-bottom: 20px; font-family: monospace; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <i class="fas fa-chip" style="font-size: 24px; color: #f1c40f;"></i>
+                    <i class="fab fa-cc-visa" style="font-size: 32px;"></i>
+                </div>
+                <div style="font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 15px; text-shadow: 1px 1px 2px black;">**** **** **** 4242</div>
+                <div style="display:flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span>TITULAR TARJETA</span>
+                    <span>12/28</span>
+                </div>
+            </div>
+            <button id="btn-pagar" class="btn-block" onclick="pagar()">PAGAR AHORA</button>
+        </div>
+    </div>
+
+    <!-- TICKET VISOR (Z-Index 3000) -->
+    <div id="modal-ticket" class="modal-overlay hidden" style="z-index: 3000 !important;">
+        <div class="modal-box" style="background:transparent; box-shadow:none; padding:0;">
+            <span class="close-btn" onclick="cerrarModales()" style="color:white; right:-30px; top:-10px; font-size:2rem;">&times;</span>
+            <div class="ticket-container" style="font-family: 'Courier New', monospace; border: 1px dashed #aaa; padding: 20px; background: #fff; color: #000; max-width: 350px; margin: 0 auto;">
+                <div style="text-align:center; border-bottom:2px dashed #000; padding-bottom:15px; margin-bottom:15px;">
+                    <h3>REFACCIONARIA GALLEGOS</h3>
+                    <div style="font-size:0.85rem;">RFC: GAL-251120-UAA<br>Ags. Mx.<br>Folio: <span id="ticket-id" style="font-weight:bold;"></span></div>
+                    <div id="ticket-fecha" style="font-size:0.85rem; margin-top:5px;"></div>
+                </div>
+                <div style="border-bottom:1px dashed #000; font-size:0.85rem; padding-bottom:5px;">
+                    <span style="width:10%; display:inline-block;">C.</span><span style="width:60%; display:inline-block;">DESCRIPCION</span><span style="width:20%; display:inline-block; text-align:right;">IMP.</span>
+                </div>
+                <div id="ticket-items" style="font-size:0.85rem; min-height:50px; margin-top:5px;"></div>
+                <div style="border-top:2px dashed #000; padding-top:10px; text-align:right; font-size:1.1rem; font-weight:bold; margin-top:10px;">TOTAL: <span id="ticket-total">$0.00</span></div>
+                <div style="text-align:center; margin-top:20px; font-size:0.8rem; font-style:italic;">¡GRACIAS POR SU COMPRA!<br>www.refaccionariagallegos.com</div>
+                <button class="btn-block" style="margin-top:15px;" onclick="cerrarModales()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:3000/api';
+        let usuario = null; let carrito = []; let productosGlobal = []; let pedidosGlobal = [];
+        const DEFAULT_IMAGES = { 'Motor':'https://placehold.co/400?text=Motor', 'General':'https://placehold.co/400?text=Refaccion' };
+
+        window.onload = () => {
+            const saved = localStorage.getItem('user_session');
+            if(saved) { usuario = JSON.parse(saved); actualizarUI(); } else { document.getElementById('menu-guest').classList.remove('hidden'); }
+            cargarProductos();
+        };
+
+        function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function cerrarModales() { document.querySelectorAll('.modal-overlay').forEach(el => el.classList.add('hidden')); }
+        function mostrarToast(msg) { const t=document.getElementById('toast'); document.getElementById('toast-msg').innerText=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+        function ocultarVistas() { ['view-home','view-orders','view-admin','view-about','view-privacy','view-contact'].forEach(id => document.getElementById(id).classList.add('hidden')); }
+        function irAHome() { ocultarVistas(); document.getElementById('view-home').classList.remove('hidden'); if(usuario?.rol !== 'admin') cargarProductos(); }
+        function mostrarPagina(id) { ocultarVistas(); document.getElementById(id).classList.remove('hidden'); }
+        function verDashboard() { ocultarVistas(); document.getElementById('view-admin').classList.remove('hidden'); cargarDatosAdmin(); }
+
+        function actualizarUI() {
+            document.getElementById('menu-guest').classList.add('hidden'); document.getElementById('menu-cliente').classList.add('hidden'); document.getElementById('menu-admin').classList.add('hidden');
+            if(usuario.rol === 'admin') { document.getElementById('menu-admin').classList.remove('hidden'); verDashboard(); }
+            else { document.getElementById('menu-cliente').classList.remove('hidden'); document.getElementById('user-name').innerText = `Hola, ${usuario.nombre.split(' ')[0]}`; irAHome(); }
+        }
+        function logout() { localStorage.removeItem('user_session'); location.reload(); }
+
+        /* DATA */
+        const convertBase64 = (file) => new Promise((resolve, reject) => { const fr = new FileReader(); fr.readAsDataURL(file); fr.onload = () => resolve(fr.result); fr.onerror = error => reject(error); });
+        async function cargarProductos() { try { const res = await fetch(`${API}/productos`); if(res.ok) { productosGlobal = await res.json(); renderizarCatalogo(productosGlobal); } } catch(e) { console.log(e); } }
+
+        function renderizarCatalogo(lista) {
+            const cont = document.getElementById('catalogo'); cont.innerHTML = '';
+            lista.forEach(p => {
+                let imgSrc = (p.imagen && p.imagen.startsWith('data:')) ? p.imagen : (DEFAULT_IMAGES[p.categoria] || DEFAULT_IMAGES['General']);
+                let btn = `<button onclick="abrirModal('modal-login')" style="width:100%; padding:8px; background:#555; color:white; border:none; border-radius:20px; cursor:pointer;">Login</button>`;
+                if(usuario && usuario.rol === 'cliente') btn = p.stock > 0 ? `<button class="btn-highlight" style="width:100%; padding:8px; border:none; border-radius:20px; cursor:pointer; color:white;" onclick="agregarCarrito('${p.nombre}', ${p.precio_venta})">AGREGAR</button>` : `<button disabled style="width:100%; padding:8px; background:#ccc; border:none; border-radius:20px; cursor:not-allowed;">AGOTADO</button>`;
+                cont.innerHTML += `<div class="card"><div class="card-img-top"><img src="${imgSrc}" onerror="this.src='${DEFAULT_IMAGES['General']}'"></div><div class="card-body"><div class="card-title">${p.nombre}</div><div class="card-price">$${p.precio_venta}</div>${btn}</div></div>`;
+            });
+        }
+        function filtrarProductos() { const txt = document.getElementById('buscador').value.toLowerCase(); renderizarCatalogo(productosGlobal.filter(p => p.nombre.toLowerCase().includes(txt))); }
+
+        /* ADMIN: ARREGLO CRÍTICO DE TICKET */
+        async function cargarDatosAdmin() {
+            try {
+                const [resStats, resProds, resOrders] = await Promise.all([fetch(`${API}/admin/analisis`), fetch(`${API}/productos`), fetch(`${API}/admin/pedidos`)]);
+                const stats = await resStats.json(); document.getElementById('stat-ventas').innerText = `$${stats.totalVentas.toFixed(2)}`; document.getElementById('stat-pedidos').innerText = stats.cantidadPedidos;
+                
+                const prods = await resProds.json(); const tbodyP = document.querySelector('#productos-table tbody'); tbodyP.innerHTML = '';
+                let alerts = 0; const ac = document.getElementById('stock-alerts-container'); ac.innerHTML='';
+                prods.forEach(p => {
+                    if(p.stock<=5) { alerts++; ac.innerHTML+=`<div class="stock-alert-item"><i class="fas fa-exclamation-circle"></i> ${p.nombre} (${p.stock})</div>`; }
+                    tbodyP.innerHTML += `<tr><td><b>${p.nombre}</b><br><small>${p.marca}</small></td><td>${p.categoria}</td><td>$${p.precio_venta}</td><td><span class="status-badge" style="background:${p.stock<5?'#e74c3c':'#27ae60'}">${p.stock}</span></td><td><button class="action-btn btn-edit" onclick="abrirEdicion('${p._id}')"><i class="fas fa-edit"></i></button><button class="action-btn btn-delete" onclick="eliminarProducto('${p._id}')"><i class="fas fa-trash"></i></button></td></tr>`;
+                });
+                document.getElementById('stat-alertas').innerText = alerts;
+
+                pedidosGlobal = await resOrders.json(); // Variable global vital para el ticket
+                const tbodyO = document.querySelector('#admin-table tbody'); tbodyO.innerHTML = '';
+                pedidosGlobal.forEach(o => {
+                    // BOTON DE TICKET AGREGADO
+                    tbodyO.innerHTML += `<tr><td>#${o._id.slice(-4)}<br><small>${o.cliente_nombre}</small></td><td>$${o.total}</td><td><select class="status-select" onchange="cambiarEstado('${o._id}', this.value)"><option value="registrado" ${o.estado=='registrado'?'selected':''}>Registrado</option><option value="enviado" ${o.estado=='enviado'?'selected':''}>Enviado</option><option value="entregado" ${o.estado=='entregado'?'selected':''}>Entregado</option></select></td><td><button class="action-btn btn-view" onclick="verDetalleTicket('${o._id}')" title="Ver Ticket"><i class="fas fa-receipt"></i></button></td></tr>`;
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // ... (CRUD, AUTH se mantienen) ...
+        async function procesarYGuardarProducto() {
+            const fileInput = document.getElementById('new-imagen-file'); let img = "";
+            if(fileInput.files.length > 0) img = await convertBase64(fileInput.files[0]);
+            const body = { nombre: document.getElementById('new-nombre').value, marca: document.getElementById('new-marca').value, categoria: document.getElementById('new-categoria').value, imagen: img, precio_venta: parseFloat(document.getElementById('new-precio').value), stock: parseInt(document.getElementById('new-stock').value) };
+            await fetch(`${API}/productos`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+            alert("OK"); cerrarModales(); cargarDatosAdmin();
+        }
+        function abrirEdicion(id) {
+            const p = productosGlobal.find(x => x._id === id); if(!p) return;
+            document.getElementById('edit-id').value = p._id; document.getElementById('edit-nombre').value = p.nombre; document.getElementById('edit-marca').value = p.marca; document.getElementById('edit-categoria').value = p.categoria; document.getElementById('edit-imagen-base64').value = p.imagen || ""; document.getElementById('edit-precio').value = p.precio_venta; document.getElementById('edit-stock').value = p.stock;
+            abrirModal('modal-editar-producto');
+        }
+        async function procesarYEditarProducto() {
+            const id = document.getElementById('edit-id').value; const fileInput = document.getElementById('edit-imagen-file');
+            let img = document.getElementById('edit-imagen-base64').value;
+            if(fileInput.files.length > 0) img = await convertBase64(fileInput.files[0]);
+            const body = { nombre: document.getElementById('edit-nombre').value, marca: document.getElementById('edit-marca').value, categoria: document.getElementById('edit-categoria').value, imagen: img, precio_venta: parseFloat(document.getElementById('edit-precio').value), stock: parseInt(document.getElementById('edit-stock').value) };
+            await fetch(`${API}/productos/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+            alert("OK"); cerrarModales(); cargarDatosAdmin(); cargarProductos();
+        }
+        async function eliminarProducto(id) { if(confirm("Eliminar?")) { await fetch(`${API}/productos/${id}`, { method:'DELETE' }); cargarDatosAdmin(); cargarProductos(); } }
+        async function cambiarEstado(id, val) { await fetch(`${API}/admin/pedidos/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({estado: val}) }); }
+
+        async function login() {
+            const email = document.getElementById('login-email').value; const pass = document.getElementById('login-pass').value;
+            try { const res = await fetch(`${API}/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password: pass}) }); const data = await res.json(); if(res.ok) { usuario = { nombre: data.nombre, email: data.email, rol: data.rol }; localStorage.setItem('user_session', JSON.stringify(usuario)); cerrarModales(); actualizarUI(); cargarProductos(); } else alert(data.mensaje); } catch(e) { alert("Error de conexión"); }
+        }
+        async function registrar() {
+            const body = { nombre: document.getElementById('reg-nombre').value, email: document.getElementById('reg-email').value, password: document.getElementById('reg-pass').value };
+            const res = await fetch(`${API}/registro`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+            if(res.ok) { alert("Registrado"); cerrarModales(); abrirModal('modal-login'); } else alert("Error");
+        }
+
+        function agregarCarrito(n, p) { carrito.push({nombre:n, precio:p}); document.getElementById('cart-counter').innerText = carrito.length; mostrarToast("Producto agregado"); }
+        function eliminarDelCarrito(i) { carrito.splice(i, 1); document.getElementById('cart-counter').innerText = carrito.length; verCarrito(); }
+        function verCarrito() { 
+            const l = document.getElementById('lista-items-carrito'); l.innerHTML=''; let t=0; 
+            carrito.forEach((i,idx) => { t+=i.precio; l.innerHTML+=`<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>${i.nombre}</span><span>$${i.precio} <button style="color:red; background:none; border:none; cursor:pointer;" onclick="eliminarDelCarrito(${idx})"><i class="fas fa-trash"></i></button></span></div>`; });
+            document.getElementById('total-carrito').innerText = `$${t.toFixed(2)}`; abrirModal('modal-carrito'); 
+        }
+
+        // --- PAGO SIMULADO ---
+        async function pagar() {
+            if(carrito.length===0) return alert("Vacio");
+            const btn=document.getElementById('btn-pagar'); btn.disabled=true; btn.innerHTML='<i class="fas fa-circle-notch fa-spin"></i> Procesando...';
+            setTimeout(async () => {
+                const t = parseFloat(document.getElementById('total-carrito').innerText.replace('$',''));
+                const res = await fetch(`${API}/pedidos`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cliente_email:usuario.email, cliente_nombre:usuario.nombre, total:t, items:carrito}) });
+                const data = await res.json();
+                if(data.id) { 
+                    // Guardamos un pedido local temporal para mostrar ticket inmediato
+                    const np = { _id: data.id, fecha: new Date(), total: t, items: [...carrito] }; 
+                    carrito=[]; document.getElementById('cart-counter').innerText=0; 
+                    cerrarModales(); mostrarTicket(np); 
+                }
+                btn.disabled=false; btn.innerText='PAGAR AHORA';
+            }, 2000);
+        }
+
+        function mostrarTicket(pedido) {
+            const fecha = pedido.fecha ? new Date(pedido.fecha).toLocaleString() : new Date().toLocaleString();
+            const idDisplay = pedido._id ? pedido._id.slice(-8).toUpperCase() : 'NUEVO';
+            document.getElementById('ticket-fecha').innerText = fecha; document.getElementById('ticket-id').innerText = idDisplay; document.getElementById('ticket-total').innerText = `$${pedido.total.toFixed(2)}`;
+            const lista = document.getElementById('ticket-items'); lista.innerHTML = '';
+            
+            // Safe check
+            if(pedido.items && Array.isArray(pedido.items)){
+                const itemsMap = {}; pedido.items.forEach(item => { if(!itemsMap[item.nombre]) itemsMap[item.nombre] = { count: 0, precio: item.precio }; itemsMap[item.nombre].count++; });
+                for (const [nombre, datos] of Object.entries(itemsMap)) { const importe = datos.count * datos.precio; lista.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:3px;"><span style="width:10%; text-align:center;">${datos.count}</span><span style="width:60%; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${nombre}</span><span style="width:25%; text-align:right;">$${importe.toFixed(2)}</span></div>`; }
+            }
+            abrirModal('modal-ticket');
+        }
+        function verDetalleTicket(id) { const p = pedidosGlobal.find(x => x._id === id); if(p) mostrarTicket(p); else alert("Pedido no encontrado"); }
+
+        async function verMisPedidos() {
+            irAHome(); ocultarVistas(); document.getElementById('view-orders').classList.remove('hidden');
+            const res = await fetch(`${API}/mis-pedidos?email=${usuario.email}`);
+            pedidosGlobal = await res.json(); // Vital para tickets
+            const l = document.getElementById('orders-list'); l.innerHTML='';
+            pedidosGlobal.forEach(o => { l.innerHTML+=`
+            <div class="order-card" style="padding:15px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                <div><strong>Pedido #${o._id.slice(-4)}</strong> <br> Estado: ${o.estado.toUpperCase()} | Total: $${o.total}</div>
+                <button class="action-btn btn-view" style="width:auto; padding:0 15px;" onclick="verDetalleTicket('${o._id}')"><i class="fas fa-receipt"></i> Ver Ticket</button>
+            </div>`; });
+        }
+    </script>
+</body>
+</html>
